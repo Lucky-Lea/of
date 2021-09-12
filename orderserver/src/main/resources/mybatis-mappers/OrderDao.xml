@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lea.dao.OrderDao">
+
+    <insert id="save" parameterType="com.lea.entity.TOrder">
+		insert into t_order(uid,mid,date,state) values(#{user.id},#{menu.id},#{date},0)
+	</insert>
+
+	<resultMap id="orderMap" type="TOrder">
+		<id column="id" property="id"/>
+		<result column="date" property="date"/>
+		<result column="state" property="state"/>
+		<association property="menu" select="com.lea.dao.MenuDao.findById" column="mid"></association>
+	</resultMap>
+
+	<resultMap id="orderMap1" type="TOrder">
+		<id column="id" property="id"/>
+		<result column="date" property="date"/>
+		<result column="state" property="state"/>
+		<association property="menu" select="com.lea.dao.MenuDao.findById" column="mid"></association>
+		<association property="user" select="com.lea.dao.UserDao.findById" column="uid"></association>
+	</resultMap>
+
+	<select id="findAllByUid" resultMap="orderMap">
+		select id,mid,date,state from t_order  where uid=#{uid} limit #{page},#{limit}
+	</select>
+
+	<select id="countByUid" resultType="int">
+		select count(*) from t_order where uid=#{uid};
+	</select>
+
+	<select id="findByState" resultMap="orderMap1">
+		select id,mid,uid,date,state from t_order  where state = 0 limit #{page},#{limit}
+	</select>
+
+	<update id="updateState" parameterType="int">
+		update t_order set state = 1 where id=#{id}
+	</update>
+
+	<select id="countByState" resultType="int">
+		select count(*) from t_order where state = 0
+	</select>
+</mapper>
